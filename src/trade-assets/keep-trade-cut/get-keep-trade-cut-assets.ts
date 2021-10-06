@@ -1,8 +1,6 @@
 import { DraftPick, Player, TradeAsset } from '../trade-asset';
-import {
-  KeepTradeCutPlayer,
-} from './keep-trade-cut-player';
-import PLAYER_DATA from './data/player-data.json'
+import { KeepTradeCutPlayer } from './keep-trade-cut-player';
+import PLAYER_DATA from './data/player-data.json';
 
 const toPlayer = (player: KeepTradeCutPlayer): Player => {
   const splitName = player.name.split(' ');
