@@ -1,24 +1,22 @@
 import { getKeepTradeCutAssets } from '../get-keep-trade-cut-assets';
 
-jest.mock('../keep-trade-cut-players-data', () => ({
-  KEEP_TRADE_CUT_PLAYERS: [
-    {
-      id: 1,
-      name: 'Lamar Jackson',
-      age: 25,
-    },
-    {
-      id: 2,
-      name: 'Justin Tucker',
-      age: 22,
-    },
-    {
-      id: 3,
-      name: '2022 Early 1st',
-      age: -1,
-    },
-  ],
-}));
+jest.mock('../data/player-data.json', () => [
+  {
+    id: 1,
+    name: 'Lamar Jackson',
+    age: 25,
+  },
+  {
+    id: 2,
+    name: 'Justin Tucker',
+    age: 22,
+  },
+  {
+    id: 3,
+    name: '2022 Early 1st',
+    age: -1,
+  },
+]);
 
 describe('getKeepTradeCutAssets', () => {
   it('should map Keep Trade Cut players to trade assets', () => {

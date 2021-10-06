@@ -1,8 +1,8 @@
 import { DraftPick, Player, TradeAsset } from '../trade-asset';
 import {
   KeepTradeCutPlayer,
-  KEEP_TRADE_CUT_PLAYERS,
-} from './keep-trade-cut-players-data';
+} from './keep-trade-cut-player';
+import PLAYER_DATA from './data/player-data.json'
 
 const toPlayer = (player: KeepTradeCutPlayer): Player => {
   const splitName = player.name.split(' ');
@@ -41,5 +41,5 @@ const toTradeAsset = (player: KeepTradeCutPlayer): TradeAsset => {
 };
 
 export const getKeepTradeCutAssets = (): TradeAsset[] => {
-  return KEEP_TRADE_CUT_PLAYERS.map((p) => toTradeAsset(p));
+  return PLAYER_DATA.map((p) => toTradeAsset(p));
 };
