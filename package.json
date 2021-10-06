@@ -4,6 +4,15 @@
   "description": "Integrate trade analysis into a Sleeper fantasy football league.",
   "main": "index.js",
   "scripts": {
+    "dev": "npm run build && npm run start",
+    "build": "tsc",
+    "start": "node dist/index.js",
+    "lint:eslint": "eslint \"src/**/*.js\"",
+    "lint:prettier": "prettier --check \"src/**/*.js\"",
+    "lint": "npm run lint:eslint && npm run lint:prettier",
+    "fix:eslint": "eslint --fix \"src/**/*.js\"",
+    "fix:prettier": "prettier --write \"src/**/*.js\"",
+    "fix": "npm run fix:eslint && npm run fix:prettier",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [
@@ -17,6 +26,11 @@
   "author": "Sean Dodson",
   "license": "ISC",
   "devDependencies": {
+    "@typescript-eslint/eslint-plugin": "^4.33.0",
+    "@typescript-eslint/parser": "^4.33.0",
+    "eslint": "^7.32.0",
+    "eslint-config-google": "^0.14.0",
+    "prettier": "^2.4.1",
     "typescript": "^4.4.3"
   }
 }
