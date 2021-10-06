@@ -1,0 +1,22 @@
+{
+  "name": "sleeper-trade-analysis",
+  "version": "1.0.0",
+  "description": "Integrate trade analysis into a Sleeper fantasy football league.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "sleeper",
+    "trade",
+    "analysis",
+    "football",
+    "fantasy",
+    "league"
+  ],
+  "author": "Sean Dodson",
+  "license": "ISC",
+  "devDependencies": {
+    "typescript": "^4.4.3"
+  }
+}
