@@ -55,8 +55,21 @@
 //   await browser.close();
 // })();
 
-import KtcPlayerData from './raw-data/ktc-player-data.json';
+import fs from 'fs';
+import { mapKtcTradeAssets } from './mappers/map-ktc-trade-assets';
+import { mapSleeperPlayers } from './mappers/map-sleeper-players';
 
-const data: Array<any> = KtcPlayerData as Array<any>;
+(async () => {
+  const ktcPlayers = mapKtcTradeAssets();
+  const ktcPlayersData = JSON.stringify(ktcPlayers);
 
-console.log(data.length);
+  fs.writeFileSync('./src/output-data/ktc-players.json', ktcPlayersData);
+
+  const sleeperPlayers = mapSleeperPlayers();
+  const sleeperPlayersData = JSON.stringify(sleeperPlayers);
+
+  fs.writeFileSync(
+    './src/output-data/sleeper-players.json',
+    sleeperPlayersData
+  );
+})();
