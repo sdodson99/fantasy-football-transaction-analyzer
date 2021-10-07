@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { Trade, TradeDraftPick, TradePlayer } from '../trade';
+import { Trade, TradeDraftPick, TradePlayer } from '../transaction';
 import {
   SleeperTransaction,
   SleeperTransactionDraftPick,
