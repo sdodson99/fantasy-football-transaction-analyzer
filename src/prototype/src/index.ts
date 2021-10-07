@@ -20,35 +20,43 @@
 //     console.log(t);
 //   });
 // })();
-import dotenv from 'dotenv';
-import { chromium } from 'playwright';
 
-dotenv.config();
+// SLEEPER BOT
+// import dotenv from 'dotenv';
+// import { chromium } from 'playwright';
 
-(async () => {
-  const browser = await chromium.launch({ headless: false });
-  const page = await browser.newPage();
+// dotenv.config();
 
-  await page.goto('https://sleeper.app/login');
+// (async () => {
+//   const browser = await chromium.launch({ headless: false });
+//   const page = await browser.newPage();
 
-  const email: string = process.env.EMAIL?.toString() ?? '';
-  await page.fill('[placeholder="Enter email, phone, or username"]', email);
-  await page.click('text=Continue');
+//   await page.goto('https://sleeper.app/login');
 
-  const password: string = process.env.PASSWORD?.toString() ?? '';
-  await page.fill('[placeholder="Enter password"]', password);
-  await page.click('.button-wrapper :text("Login")');
+//   const email: string = process.env.EMAIL?.toString() ?? '';
+//   await page.fill('[placeholder="Enter email, phone, or username"]', email);
+//   await page.click('text=Continue');
 
-  await page.waitForNavigation();
+//   const password: string = process.env.PASSWORD?.toString() ?? '';
+//   await page.fill('[placeholder="Enter password"]', password);
+//   await page.click('.button-wrapper :text("Login")');
 
-  await page.goto('https://sleeper.app/leagues/724028750487961600');
-  await page.type('[placeholder="Enter Message"]', '*SASA BOT*');
-  await page.press('[placeholder="Enter Message"]', 'Shift+Enter');
-  await page.type('[placeholder="Enter Message"]', 'new line pls');
+//   await page.waitForNavigation();
 
-  // await page.press('[placeholder="Enter Message"]', 'Enter');
+//   await page.goto('https://sleeper.app/leagues/724028750487961600');
+//   await page.type('[placeholder="Enter Message"]', '*SASA BOT*');
+//   await page.press('[placeholder="Enter Message"]', 'Shift+Enter');
+//   await page.type('[placeholder="Enter Message"]', 'new line pls');
 
-  await page.screenshot({ path: 'success.png' });
+//   // await page.press('[placeholder="Enter Message"]', 'Enter');
 
-  await browser.close();
-})();
+//   await page.screenshot({ path: 'success.png' });
+
+//   await browser.close();
+// })();
+
+import KtcPlayerData from './raw-data/ktc-player-data.json';
+
+const data: Array<any> = KtcPlayerData as Array<any>;
+
+console.log(data.length);
