@@ -1,5 +1,5 @@
 {
-  "name": "functions",
+  "name": "fantasy-football-transaction-analyzer",
   "scripts": {
     "build": "tsc",
     "serve": "npm run build && firebase emulators:start --only functions,pubsub",
