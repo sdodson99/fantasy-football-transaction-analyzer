@@ -2,7 +2,7 @@ import {
   Transaction,
   TransactionDraftPick,
   TransactionPlayer,
-} from '../../../core/transactions/transaction';
+} from '../../transactions/transaction';
 import {
   SleeperTransaction,
   SleeperTransactionDraftPick,
