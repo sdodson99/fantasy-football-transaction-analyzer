@@ -5,6 +5,7 @@
     "serve": "npm run build && firebase emulators:start --only functions,database",
     "shell": "npm run build && firebase functions:shell",
     "start": "npm run shell",
+    "start:emulators": "firebase emulators:start --only database",
     "deploy": "firebase deploy --only functions",
     "logs": "firebase functions:log",
     "lint:eslint": "eslint \"src/**/*.ts\"",
