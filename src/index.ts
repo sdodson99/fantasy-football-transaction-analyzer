@@ -8,6 +8,7 @@ import { CreateProcessedTransactionCommand } from './processed-transactions/comm
 import { TransactionLeagueType } from './transactions/transaction';
 import { ProcessedTransaction } from './processed-transactions/processed-transaction';
 import { DateTime } from 'luxon';
+import { SleeperTransactionNotifier } from './notify-sleeper-transactions/sleeper-transaction-notifier';
 
 const firebaseApp = firebase.initializeApp();
 const logger = functions.logger;
@@ -15,6 +16,8 @@ const logger = functions.logger;
 const leagueId = functions.config().sleeperLeague.id;
 const leagueType: TransactionLeagueType = 'sleeper';
 const nflWeek = 4;
+const sleeperBotEmail = functions.config().sleeperBot.email;
+const sleeperBotPassword = functions.config().sleeperBot.password;
 
 export const notifySleeperTransactions = functions.pubsub
   .schedule('every 30 minutes')
@@ -30,6 +33,10 @@ export const notifySleeperTransactions = functions.pubsub
     const transactionAnalyzer = new TransactionAnalyzer();
     const createProcessedTransactionCommand =
       new CreateProcessedTransactionCommand(firebaseApp);
+    const transactionNotifier = new SleeperTransactionNotifier(
+      sleeperBotEmail,
+      sleeperBotPassword
+    );
 
     try {
       logger.info('Querying league transactions.');
@@ -104,9 +111,17 @@ export const notifySleeperTransactions = functions.pubsub
         );
 
         logger.info('Successfully completed transaction.');
+
+        logger.info('Posting transaction to league chat.');
+
+        await transactionNotifier.notify(leagueId, processedTransaction);
+
+        logger.info('Successfully posted transaction to league chat.');
       }
+
+      logger.info('Finished notifying league transactions.');
     } catch (error) {
-      logger.error('Failed to notify Sleeper league transactions.', {
+      logger.error('Failed to notify league transactions.', {
         leagueId: leagueId,
         error,
       });

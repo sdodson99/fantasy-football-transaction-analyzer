@@ -10,6 +10,6 @@ export class TransactionAnalyzer {
    * @returns The transaction analysis link.
    */
   async analyze(transaction: Transaction): Promise<string> {
-    return 'stub-link';
+    return 'STUB_LINK';
   }
 }
