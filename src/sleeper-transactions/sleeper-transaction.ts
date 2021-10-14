@@ -1,6 +1,8 @@
 /* eslint-disable camelcase */
 export type SleeperTransactionType = 'trade' | 'free_agent' | 'waiver';
 
+export type SleeperTransactionStatus = 'complete' | 'failed';
+
 export type SleeperTransactionDraftPick = {
   round: number;
   season: string;
@@ -15,6 +17,7 @@ export type SleeperTransactionPlayerToRoster = {
 export type SleeperTransaction = {
   transaction_id: string;
   type: SleeperTransactionType;
+  status: SleeperTransactionStatus;
   leg: number;
   created: number;
   adds: SleeperTransactionPlayerToRoster | null;

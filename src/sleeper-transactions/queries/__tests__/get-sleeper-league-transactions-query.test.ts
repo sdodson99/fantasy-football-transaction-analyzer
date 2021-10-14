@@ -30,6 +30,7 @@ describe('GetSleeperLeagueTransactionsQuery', () => {
       {
         transaction_id: '1',
         type: 'trade',
+        status: 'complete',
         leg: 4,
         created: 1,
         adds: {
@@ -52,6 +53,7 @@ describe('GetSleeperLeagueTransactionsQuery', () => {
       {
         transaction_id: '2',
         type: 'free_agent',
+        status: 'complete',
         leg: 4,
         created: 1,
         adds: {
@@ -121,6 +123,7 @@ describe('GetSleeperLeagueTransactionsQuery', () => {
       {
         transaction_id: '1',
         type: 'free_agent',
+        status: 'complete',
         leg: 4,
         created: 1,
         adds: null,
@@ -144,6 +147,7 @@ describe('GetSleeperLeagueTransactionsQuery', () => {
       {
         transaction_id: '1',
         type: 'free_agent',
+        status: 'complete',
         leg: 4,
         created: 1,
         adds: {
@@ -160,5 +164,29 @@ describe('GetSleeperLeagueTransactionsQuery', () => {
     const result = await query.execute(leagueId, week);
 
     expect(result[0].droppedPlayers).toEqual([]);
+  });
+
+  it('should filter out incomplete transactions', async () => {
+    const mockSleeperTransasctions: SleeperTransaction[] = [
+      {
+        transaction_id: '1',
+        type: 'free_agent',
+        status: 'failed',
+        leg: 4,
+        created: 1,
+        adds: {
+          '3': 3,
+        },
+        drops: null,
+        draft_picks: [],
+      },
+    ];
+    when(mockAxiosGet)
+      .calledWith(transactionsApiUrl)
+      .mockReturnValue({ data: mockSleeperTransasctions });
+
+    const result = await query.execute(leagueId, week);
+
+    expect(result).toEqual([]);
   });
 });

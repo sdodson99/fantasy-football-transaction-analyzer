@@ -25,7 +25,9 @@ export class GetSleeperLeagueTransactionsQuery {
       `https://api.sleeper.app/v1/league/${leagueId}/transactions/${week}`
     );
 
-    return sleeperTransactions.map((t) => this.toTransaction(t, leagueId));
+    return sleeperTransactions
+      .filter((t) => t.status === 'complete')
+      .map((t) => this.toTransaction(t, leagueId));
   }
 
   /**
