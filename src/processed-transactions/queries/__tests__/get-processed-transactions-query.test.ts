@@ -72,4 +72,14 @@ describe('GetProcessedTransactionsQuery', () => {
       },
     ]);
   });
+
+  it('should return empty processed transactions from database when league has no processed transactions', async () => {
+    mockDatabaseGet.mockReturnValue({
+      val: () => null,
+    });
+
+    const result = await query.execute(leagueId, leagueType);
+
+    expect(result).toEqual([]);
+  });
 });

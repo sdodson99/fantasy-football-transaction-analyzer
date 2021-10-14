@@ -1,13 +1,7 @@
 import * as firebase from 'firebase-admin';
 import { TransactionLeagueType } from '../../transactions/transaction';
 import { ProcessedTransaction } from '../processed-transaction';
-
-export type ProcessedTransactionDto = {
-  transactionId: string;
-  week: number;
-  analysisUrl: string;
-  processedTimestamp: number;
-};
+import { ProcessedTransactionDto } from '../processed-transaction-dto';
 
 /**
  * Query for processed transactions.
@@ -37,6 +31,11 @@ export class GetProcessedTransactionsQuery {
       .get();
 
     const processedTransactionsValue = processedTransactionsData.val();
+
+    if (!processedTransactionsValue) {
+      return [];
+    }
+
     const processedTransactionDtos: ProcessedTransactionDto[] = Object.values(
       processedTransactionsValue
     );
