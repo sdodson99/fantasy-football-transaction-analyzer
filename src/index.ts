@@ -4,18 +4,23 @@ import { GetSleeperLeagueTransactionsQuery } from './sleeper-transactions/querie
 import { GetProcessedTransactionsQuery } from './processed-transactions/queries/get-processed-transactions-query';
 import { filterProcessedTransactions } from './processed-transactions/services/filter-processed-transactions';
 import { TransactionAnalyzer } from './analyze-transactions/transaction-analyzer';
+import { CreateProcessedTransactionCommand } from './processed-transactions/commands/create-processed-transaction-command';
+import { TransactionLeagueType } from './transactions/transaction';
+import { ProcessedTransaction } from './processed-transactions/processed-transaction';
+import { DateTime } from 'luxon';
 
 const firebaseApp = firebase.initializeApp();
 const logger = functions.logger;
 
-const sleeperLeagueId = functions.config().sleeperLeague.id;
+const leagueId = functions.config().sleeperLeague.id;
+const leagueType: TransactionLeagueType = 'sleeper';
 const nflWeek = 4;
 
 export const notifySleeperTransactions = functions.pubsub
   .schedule('every 30 minutes')
   .onRun(async () => {
     logger.info('Starting Sleeper league transactions notifier.', {
-      leagueId: sleeperLeagueId,
+      leagueId,
     });
 
     const getLeagueTransactionsQuery = new GetSleeperLeagueTransactionsQuery();
@@ -23,12 +28,14 @@ export const notifySleeperTransactions = functions.pubsub
       firebaseApp
     );
     const transactionAnalyzer = new TransactionAnalyzer();
+    const createProcessedTransactionCommand =
+      new CreateProcessedTransactionCommand(firebaseApp);
 
     try {
       logger.info('Querying league transactions.');
 
       const transactions = await getLeagueTransactionsQuery.execute(
-        sleeperLeagueId,
+        leagueId,
         nflWeek
       );
 
@@ -39,8 +46,8 @@ export const notifySleeperTransactions = functions.pubsub
       logger.info('Querying processed league transactions.');
 
       const processedTransactions = await getProcessedTransactionsQuery.execute(
-        '1',
-        'sleeper'
+        leagueId,
+        leagueType
       );
 
       logger.info('Successfully queried processed league transactions.', {
@@ -58,6 +65,12 @@ export const notifySleeperTransactions = functions.pubsub
         unprocessedTransactionsCount: unprocessedTransactions.length,
       });
 
+      if (unprocessedTransactions.length === 0) {
+        return logger.info('No transactions to process.', {
+          unprocessedTransactionsCount: unprocessedTransactions.length,
+        });
+      }
+
       for (let index = 0; index < unprocessedTransactions.length; index++) {
         const currentUnprocessedTransaction = unprocessedTransactions[index];
 
@@ -74,10 +87,27 @@ export const notifySleeperTransactions = functions.pubsub
         });
 
         logger.info('Completing transaction.');
+
+        const processedTransaction: ProcessedTransaction = {
+          transactionId: currentUnprocessedTransaction.id,
+          type: currentUnprocessedTransaction.type,
+          leagueId,
+          leagueType,
+          week: currentUnprocessedTransaction.week,
+          analysisUrl: transactionAnalysisUrl,
+          processedEpochMillis: DateTime.now().toMillis(),
+        };
+        await createProcessedTransactionCommand.execute(
+          leagueId,
+          leagueType,
+          processedTransaction
+        );
+
+        logger.info('Successfully completed transaction.');
       }
     } catch (error) {
-      logger.error('Failed to notify Sleeper league transactions', {
-        leagueId: sleeperLeagueId,
+      logger.error('Failed to notify Sleeper league transactions.', {
+        leagueId: leagueId,
         error,
       });
     }
