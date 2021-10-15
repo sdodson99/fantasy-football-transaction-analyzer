@@ -12,6 +12,7 @@ import { SleeperTransactionNotifier } from './notify-sleeper-transactions/sleepe
 import { GetAllSleeperApiPlayersQuery } from './transaction-assets/sleeper/queries/get-all-sleeper-api-players-query';
 import { SaveAllSleeperPlayersCommand } from './transaction-assets/sleeper/commands/save-all-sleeper-players-command';
 import { GetAllKtcStoredTransactionAssetsQuery } from './transaction-assets/ktc/queries/get-all-ktc-stored-transaction-assets-query';
+import { SaveAllKtcPlayersCommand } from './transaction-assets/ktc/commands/save-all-ktc-players-command';
 
 const firebaseApp = firebase.initializeApp();
 const logger = functions.logger;
@@ -43,34 +44,28 @@ export const notifySleeperTransactions = functions.pubsub
 
     try {
       logger.info('Querying league transactions.');
-
       const transactions = await getLeagueTransactionsQuery.execute(
         leagueId,
         nflWeek
       );
-
       logger.info('Successfully queried league transactions.', {
         transactionCount: transactions.length,
       });
 
       logger.info('Querying processed league transactions.');
-
       const processedTransactions = await getProcessedTransactionsQuery.execute(
         leagueId,
         leagueType
       );
-
       logger.info('Successfully queried processed league transactions.', {
         processedTransactionsCount: processedTransactions.length,
       });
 
       logger.info('Filtering out already processed league transactions.');
-
       const unprocessedTransactions = filterProcessedTransactions(
         transactions,
         processedTransactions
       );
-
       logger.info('Filtered out already processed league transactions.', {
         unprocessedTransactionsCount: unprocessedTransactions.length,
       });
@@ -87,17 +82,14 @@ export const notifySleeperTransactions = functions.pubsub
         logger.info('Analyzing transaction.', {
           transactionId: currentUnprocessedTransaction.id,
         });
-
         const transactionAnalysisUrl = await transactionAnalyzer.analyze(
           currentUnprocessedTransaction
         );
-
         logger.info('Successfully analyzed transaction.', {
           analysisUrl: transactionAnalysisUrl,
         });
 
         logger.info('Completing transaction.');
-
         const processedTransaction: ProcessedTransaction = {
           transactionId: currentUnprocessedTransaction.id,
           type: currentUnprocessedTransaction.type,
@@ -112,13 +104,10 @@ export const notifySleeperTransactions = functions.pubsub
           leagueType,
           processedTransaction
         );
-
         logger.info('Successfully completed transaction.');
 
         logger.info('Posting transaction to league chat.');
-
         // await transactionNotifier.notify(leagueId, processedTransaction);
-
         logger.info('Successfully posted transaction to league chat.');
       }
 
@@ -143,15 +132,12 @@ export const updateSleeperPlayers = functions.pubsub
       );
 
       logger.info('Querying all Sleeper players.');
-
       const sleeperPlayers = await getAllSleeperApiPlayersQuery.execute();
-
       logger.info('Successfully queried all Sleeper players.', {
         sleeperPlayersCount: sleeperPlayers.length,
       });
 
       logger.info('Saving all Sleeper players.');
-
       await saveAllSleeperPlayersCommand.execute(sleeperPlayers);
 
       logger.info('Successfully updated Sleeper players.');
@@ -168,31 +154,31 @@ export const updateKtcTransactionAssets = functions.storage
     logger.info('Detected Firebase Storage file creation.');
 
     if (file.name !== 'ktc-players.json') {
-      logger.info(
+      return logger.info(
         'Created file was not for KTC players update. Maybe next time...',
         { fileName: file.name }
       );
-
-      return;
     }
 
     logger.info('Starting KTC transaction assets update.');
 
     const getAllKtcStoredTransactionAssetsQuery =
       new GetAllKtcStoredTransactionAssetsQuery(firebaseApp);
+    const saveAllKtcPlayersCommand = new SaveAllKtcPlayersCommand(firebaseApp);
 
     try {
       logger.info('Querying all Sleeper transaction assets.');
-
-      const ktcTransactionAssets =
+      const { players, draftPicks } =
         await getAllKtcStoredTransactionAssetsQuery.execute();
-
       logger.info('Successfully queried all KTC transaction assets.', {
-        ktcDraftPicksCount: ktcTransactionAssets.draftPicks.length,
-        ktcPlayersCount: ktcTransactionAssets.players.length,
+        ktcDraftPicksCount: draftPicks.length,
+        ktcPlayersCount: players.length,
       });
 
-      // Save transaction assets.
+      logger.info('Saving all KTC players.');
+      await saveAllKtcPlayersCommand.execute(players);
+
+      logger.info('Saving all KTC draft picks.');
 
       logger.info('Successfully updated KTC transaction assets.');
     } catch (error) {

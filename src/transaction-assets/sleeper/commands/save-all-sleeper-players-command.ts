@@ -19,13 +19,14 @@ export class SaveAllSleeperPlayersCommand {
   async execute(sleeperPlayers: SleeperPlayer[]): Promise<void> {
     const sleeperPlayersPath = '/transaction_assets/sleeper/players';
 
-    const sleeperPlayersMap: SleeperPlayersMapDto = sleeperPlayers.reduce(
-      (prev, curr) => ({
-        ...prev,
-        [curr.id]: curr,
-      }),
-      {}
-    );
+    const sleeperPlayersMap: SleeperPlayersMapDto =
+      sleeperPlayers.reduce<SleeperPlayersMapDto>(
+        (prev, curr) => ({
+          ...prev,
+          [curr.id]: curr,
+        }),
+        {}
+      );
 
     await this.firebaseApp
       .database()
