@@ -15,6 +15,7 @@
   },
   "plugins": ["@typescript-eslint"],
   "rules": {
-    "valid-jsdoc": "off"
+    "valid-jsdoc": "off",
+    "no-unused-vars": "warn"
   }
 }
