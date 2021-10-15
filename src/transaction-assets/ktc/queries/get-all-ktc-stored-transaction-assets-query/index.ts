@@ -31,6 +31,7 @@ export class GetAllKtcStoredTransactionAssetsQuery {
   async execute(): Promise<KtcTransactionAssets> {
     await this.firebaseApp.storage().bucket().file(this.fileName).download({
       destination: this.destinationFilePath,
+      validation: false,
     });
 
     const ktcTransactionAssetsBuffer = await fs.readFile(

@@ -2,10 +2,10 @@
   "name": "fantasy-football-transaction-analyzer",
   "scripts": {
     "build": "tsc",
-    "serve": "npm run build && firebase emulators:start --only functions,database",
+    "serve": "npm run build && firebase emulators:start --only functions,database,storage",
     "shell": "npm run build && firebase functions:shell",
     "start": "npm run shell",
-    "start:emulators": "firebase emulators:start --only database",
+    "start:emulators": "firebase emulators:start --only database,storage",
     "deploy": "firebase deploy --only functions",
     "logs": "firebase functions:log",
     "lint:eslint": "eslint \"src/**/*.ts\"",
