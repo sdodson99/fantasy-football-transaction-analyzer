@@ -67,3 +67,6 @@ node_modules/
 
 lib
 .runtimeconfig.json
+
+# Data
+ktc-players.json

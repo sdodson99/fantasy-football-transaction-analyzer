@@ -11,6 +11,7 @@ import { DateTime } from 'luxon';
 import { SleeperTransactionNotifier } from './notify-sleeper-transactions/sleeper-transaction-notifier';
 import { GetAllSleeperApiPlayersQuery } from './transaction-assets/sleeper/queries/get-all-sleeper-api-players-query';
 import { SaveAllSleeperPlayersCommand } from './transaction-assets/sleeper/commands/save-all-sleeper-players-command';
+import { GetAllKtcStoredTransactionAssetsQuery } from './transaction-assets/ktc/queries/get-all-ktc-stored-transaction-assets-query';
 
 const firebaseApp = firebase.initializeApp();
 const logger = functions.logger;
@@ -156,6 +157,35 @@ export const updateSleeperPlayers = functions.pubsub
       logger.info('Successfully updated Sleeper players.');
     } catch (error) {
       logger.error('Failed to update Sleeper players.', {
+        error,
+      });
+    }
+  });
+
+export const updateKtcTransactionAssets = functions.pubsub
+  .schedule('0 0 1 * *')
+  .onRun(async () => {
+    logger.info('Starting KTC transaction assets update.');
+
+    const getAllKtcStoredTransactionAssetsQuery =
+      new GetAllKtcStoredTransactionAssetsQuery(firebaseApp);
+
+    try {
+      logger.info('Querying all Sleeper transaction assets.');
+
+      const ktcTransactionAssets =
+        await getAllKtcStoredTransactionAssetsQuery.execute();
+
+      logger.info('Successfully queried all KTC transaction assets.', {
+        ktcDraftPicksCount: ktcTransactionAssets.draftPicks.length,
+        ktcPlayersCount: ktcTransactionAssets.players.length,
+      });
+
+      // Save transaction assets.
+
+      logger.info('Successfully updated KTC transaction assets.');
+    } catch (error) {
+      logger.error('Failed to update KTC transaction assets.', {
         error,
       });
     }
