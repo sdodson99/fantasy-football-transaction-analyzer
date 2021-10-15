@@ -1,0 +1,11 @@
+{
+  "rules": {
+    "transaction_assets": {
+        "ktc": {
+          "players": {
+            ".indexOn": ["firstName_lastName_birthDate_index"]
+          }
+        }
+    }
+  }
+}
