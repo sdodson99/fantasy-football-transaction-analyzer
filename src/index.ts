@@ -9,6 +9,8 @@ import { TransactionLeagueType } from './transactions/transaction';
 import { ProcessedTransaction } from './processed-transactions/processed-transaction';
 import { DateTime } from 'luxon';
 import { SleeperTransactionNotifier } from './notify-sleeper-transactions/sleeper-transaction-notifier';
+import { GetAllSleeperApiPlayersQuery } from './transaction-assets/sleeper/queries/get-all-sleeper-api-players-query';
+import { SaveAllSleeperPlayersCommand } from './transaction-assets/sleeper/commands/save-all-sleeper-players-command';
 
 const firebaseApp = firebase.initializeApp();
 const logger = functions.logger;
@@ -20,7 +22,7 @@ const sleeperBotEmail = functions.config().sleeperBot.email;
 const sleeperBotPassword = functions.config().sleeperBot.password;
 
 export const notifySleeperTransactions = functions.pubsub
-  .schedule('every 30 minutes')
+  .schedule('*/30 * * * *')
   .onRun(async () => {
     logger.info('Starting Sleeper league transactions notifier.', {
       leagueId,
@@ -114,7 +116,7 @@ export const notifySleeperTransactions = functions.pubsub
 
         logger.info('Posting transaction to league chat.');
 
-        await transactionNotifier.notify(leagueId, processedTransaction);
+        // await transactionNotifier.notify(leagueId, processedTransaction);
 
         logger.info('Successfully posted transaction to league chat.');
       }
@@ -123,6 +125,37 @@ export const notifySleeperTransactions = functions.pubsub
     } catch (error) {
       logger.error('Failed to notify league transactions.', {
         leagueId: leagueId,
+        error,
+      });
+    }
+  });
+
+export const updateSleeperPlayers = functions.pubsub
+  .schedule('0 0 1 * *')
+  .onRun(async () => {
+    logger.info('Starting Sleeper players update.');
+
+    try {
+      const getAllSleeperApiPlayersQuery = new GetAllSleeperApiPlayersQuery();
+      const saveAllSleeperPlayersCommand = new SaveAllSleeperPlayersCommand(
+        firebaseApp
+      );
+
+      logger.info('Querying all Sleeper players.');
+
+      const sleeperPlayers = await getAllSleeperApiPlayersQuery.execute();
+
+      logger.info('Successfully queried all Sleeper players.', {
+        sleeperPlayersCount: sleeperPlayers.length,
+      });
+
+      logger.info('Saving all Sleeper players.');
+
+      await saveAllSleeperPlayersCommand.execute(sleeperPlayers);
+
+      logger.info('Successfully updated Sleeper players.');
+    } catch (error) {
+      logger.error('Failed to update Sleeper players.', {
         error,
       });
     }
