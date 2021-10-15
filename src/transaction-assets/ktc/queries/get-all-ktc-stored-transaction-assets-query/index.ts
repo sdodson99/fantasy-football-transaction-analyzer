@@ -1,27 +1,26 @@
-import * as firebase from 'firebase-admin';
 import {
   KtcDraftPick,
   KtcPlayer,
   KtcTransactionAssets,
 } from '../../ktc-transaction-asset';
-import { promises as fs } from 'fs';
 import { KtcStoredTransactionAsset } from './ktc-stored-transaction-asset';
 import { DateTime } from 'luxon';
+import { FirebaseStorageJsonFileReader } from '../../../../core/firebase-storage-json-file-reader';
 
 /**
  * Query to get all KTC stored transaction assets.
  */
 export class GetAllKtcStoredTransactionAssetsQuery {
   private fileName: string;
-  private destinationFilePath: string;
 
   /**
    * Initialize with a Firebase app.
    * @param firebaseApp The initialized Firebase app.
    */
-  constructor(private firebaseApp: firebase.app.App) {
+  constructor(
+    private firebaseStorageJsonFileReader: FirebaseStorageJsonFileReader
+  ) {
     this.fileName = 'ktc-players.json';
-    this.destinationFilePath = `./${this.fileName}`;
   }
 
   /**
@@ -29,18 +28,9 @@ export class GetAllKtcStoredTransactionAssetsQuery {
    * @returns The KTC transaction assets.
    */
   async execute(): Promise<KtcTransactionAssets> {
-    await this.firebaseApp.storage().bucket().file(this.fileName).download({
-      destination: this.destinationFilePath,
-      validation: false,
-    });
-
-    const ktcTransactionAssetsBuffer = await fs.readFile(
-      this.destinationFilePath
-    );
-
-    const ktcTransactionAssets: KtcStoredTransactionAsset[] = JSON.parse(
-      ktcTransactionAssetsBuffer.toString()
-    );
+    const ktcTransactionAssets = await this.firebaseStorageJsonFileReader.read<
+      KtcStoredTransactionAsset[]
+    >(this.fileName);
 
     return ktcTransactionAssets.reduce<KtcTransactionAssets>(
       (assets, currentAsset) => {

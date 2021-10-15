@@ -14,6 +14,7 @@ import { SaveAllSleeperPlayersCommand } from './transaction-assets/sleeper/comma
 import { GetAllKtcStoredTransactionAssetsQuery } from './transaction-assets/ktc/queries/get-all-ktc-stored-transaction-assets-query';
 import { SaveAllKtcPlayersCommand } from './transaction-assets/ktc/commands/save-all-ktc-players-command';
 import { SaveAllKtcDraftPicksCommand } from './transaction-assets/ktc/commands/save-all-ktc-draft-picks-command';
+import { FirebaseStorageJsonFileReader } from './core/firebase-storage-json-file-reader';
 
 const firebaseApp = firebase.initializeApp();
 const logger = functions.logger;
@@ -163,8 +164,11 @@ export const updateKtcTransactionAssets = functions.storage
 
     logger.info('Starting KTC transaction assets update.');
 
+    const firebaseStorageJsonFileReader = new FirebaseStorageJsonFileReader(
+      firebaseApp
+    );
     const getAllKtcStoredTransactionAssetsQuery =
-      new GetAllKtcStoredTransactionAssetsQuery(firebaseApp);
+      new GetAllKtcStoredTransactionAssetsQuery(firebaseStorageJsonFileReader);
     const saveAllKtcPlayersCommand = new SaveAllKtcPlayersCommand(firebaseApp);
     const saveAllKtcDraftPicksCommand = new SaveAllKtcDraftPicksCommand(
       firebaseApp
