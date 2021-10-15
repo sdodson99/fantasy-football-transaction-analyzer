@@ -11,9 +11,11 @@ describe('SaveAllSleeperPlayersCommand', () => {
   beforeEach(() => {
     mockDatabaseSet = jest.fn();
     const mockDatabaseRef = jest.fn();
-    when(mockDatabaseRef).calledWith(`/players/sleeper`).mockReturnValue({
-      set: mockDatabaseSet,
-    });
+    when(mockDatabaseRef)
+      .calledWith('/transaction_assets/sleeper/players')
+      .mockReturnValue({
+        set: mockDatabaseSet,
+      });
     const mockFirebaseApp = {
       database: () => ({
         ref: mockDatabaseRef,

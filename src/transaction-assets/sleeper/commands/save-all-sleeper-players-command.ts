@@ -17,7 +17,7 @@ export class SaveAllSleeperPlayersCommand {
    * @param sleeperPlayers The players to save.
    */
   async execute(sleeperPlayers: SleeperPlayer[]): Promise<void> {
-    const sleeperPlayersPath = `/players/sleeper`;
+    const sleeperPlayersPath = '/transaction_assets/sleeper/players';
 
     const sleeperPlayersMap: SleeperPlayersMapDto = sleeperPlayers.reduce(
       (prev, curr) => ({
