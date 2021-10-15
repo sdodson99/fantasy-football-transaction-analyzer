@@ -13,6 +13,7 @@ import { GetAllSleeperApiPlayersQuery } from './transaction-assets/sleeper/queri
 import { SaveAllSleeperPlayersCommand } from './transaction-assets/sleeper/commands/save-all-sleeper-players-command';
 import { GetAllKtcStoredTransactionAssetsQuery } from './transaction-assets/ktc/queries/get-all-ktc-stored-transaction-assets-query';
 import { SaveAllKtcPlayersCommand } from './transaction-assets/ktc/commands/save-all-ktc-players-command';
+import { SaveAllKtcDraftPicksCommand } from './transaction-assets/ktc/commands/save-all-ktc-draft-picks-command';
 
 const firebaseApp = firebase.initializeApp();
 const logger = functions.logger;
@@ -165,6 +166,9 @@ export const updateKtcTransactionAssets = functions.storage
     const getAllKtcStoredTransactionAssetsQuery =
       new GetAllKtcStoredTransactionAssetsQuery(firebaseApp);
     const saveAllKtcPlayersCommand = new SaveAllKtcPlayersCommand(firebaseApp);
+    const saveAllKtcDraftPicksCommand = new SaveAllKtcDraftPicksCommand(
+      firebaseApp
+    );
 
     try {
       logger.info('Querying all Sleeper transaction assets.');
@@ -179,6 +183,7 @@ export const updateKtcTransactionAssets = functions.storage
       await saveAllKtcPlayersCommand.execute(players);
 
       logger.info('Saving all KTC draft picks.');
+      await saveAllKtcDraftPicksCommand.execute(draftPicks);
 
       logger.info('Successfully updated KTC transaction assets.');
     } catch (error) {
