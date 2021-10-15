@@ -162,9 +162,20 @@ export const updateSleeperPlayers = functions.pubsub
     }
   });
 
-export const updateKtcTransactionAssets = functions.pubsub
-  .schedule('0 0 1 * *')
-  .onRun(async () => {
+export const updateKtcTransactionAssets = functions.storage
+  .object()
+  .onFinalize(async (file) => {
+    logger.info('Detected Firebase Storage file creation.');
+
+    if (file.name !== 'ktc-players.json') {
+      logger.info(
+        'Created file was not for KTC players update. Maybe next time...',
+        { fileName: file.name }
+      );
+
+      return;
+    }
+
     logger.info('Starting KTC transaction assets update.');
 
     const getAllKtcStoredTransactionAssetsQuery =
