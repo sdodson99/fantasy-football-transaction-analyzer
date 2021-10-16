@@ -139,7 +139,7 @@ export const notifySleeperTransactions = functions.pubsub
         logger.info('Successfully completed transaction.');
 
         logger.info('Posting transaction to league chat.');
-        // await transactionNotifier.notify(leagueId, processedTransaction);
+        await transactionNotifier.notify(leagueId, processedTransaction);
         logger.info('Successfully posted transaction to league chat.');
       }
 

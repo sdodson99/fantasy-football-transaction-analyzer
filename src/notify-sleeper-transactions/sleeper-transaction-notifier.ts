@@ -52,7 +52,7 @@ export class SleeperTransactionNotifier {
       `See the analysis here: ${processedTransaction.analysisUrl}`
     );
 
-    // await page.press('[placeholder="Enter Message"]', 'Enter');
+    await page.press('[placeholder="Enter Message"]', 'Enter');
 
     await browser.close();
   }
