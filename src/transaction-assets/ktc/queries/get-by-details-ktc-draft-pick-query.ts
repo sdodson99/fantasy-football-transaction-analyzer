@@ -18,7 +18,7 @@ export class GetByDetailsKtcDraftPickQuery {
    * @param year The year of the draft pick to query.
    * @returns The draft pick for the details. Null if draft pick not found.
    */
-  async execute(round: string, year: string): Promise<KtcDraftPick | null> {
+  async execute(round: number, year: number): Promise<KtcDraftPick | null> {
     const ktcDraftPicksPath = `/transaction_assets/ktc/draft_picks`;
 
     const ktcDraftPickData = await this.firebaseApp

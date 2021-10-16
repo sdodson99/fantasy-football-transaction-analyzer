@@ -7,12 +7,12 @@ describe('GetByDetailsKtcDraftPickQuery', () => {
 
   let mockDatabaseGet: jest.Mock;
 
-  let round: string;
-  let year: string;
+  let round: number;
+  let year: number;
 
   beforeEach(() => {
-    round = 'round';
-    year = 'year';
+    round = 1;
+    year = 2022;
 
     mockDatabaseGet = jest.fn();
     const mockLimitToFirst = jest.fn();
@@ -20,7 +20,7 @@ describe('GetByDetailsKtcDraftPickQuery', () => {
       get: mockDatabaseGet,
     });
     const mockEqualTo = jest.fn();
-    when(mockEqualTo).calledWith('round_year').mockReturnValue({
+    when(mockEqualTo).calledWith('1_2022').mockReturnValue({
       limitToFirst: mockLimitToFirst,
     });
     const mockOrderByChild = jest.fn();
