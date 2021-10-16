@@ -28,14 +28,14 @@ const firebaseApp = firebase.initializeApp();
 const logger = functions.logger;
 
 const leagueId = functions.config().sleeper_league.id;
-const leagueType: TransactionLeagueType = 'sleeper';
-const nflWeek = 4;
 const sleeperBotEmail = functions.config().sleeper_bot.email;
 const sleeperBotPassword = functions.config().sleeper_bot.password;
 const bitlyAccessToken = functions.config().bitly.access_token;
+const nflWeek = functions.config().nfl.week;
+const leagueType: TransactionLeagueType = 'sleeper';
 
 export const notifySleeperTransactions = functions.pubsub
-  .schedule('*/30 * * * *')
+  .schedule('0 * * * *')
   .onRun(async () => {
     logger.info('Starting Sleeper league transactions notifier.', {
       leagueId,
