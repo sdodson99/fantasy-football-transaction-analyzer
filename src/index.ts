@@ -20,6 +20,8 @@ import { GetByDetailsKtcPlayerQuery } from './transaction-assets/ktc/queries/get
 import { SleeperToKtcPlayerConverter } from './transaction-assets/services/sleeper-to-ktc-player-converter';
 import { ManySleeperToKtcPlayersConverter } from './transaction-assets/services/many-sleeper-to-ktc-players-converter';
 import { KtcTransactionAnalysisLinkGenerator } from './analyze-transactions/services/ktc-transaction-analysis-link-generator';
+import { GetManyByDetailsKtcDraftPicksQuery } from './transaction-assets/ktc/queries/get-many-by-details-ktc-draft-picks-query';
+import { GetByDetailsKtcDraftPickQuery } from './transaction-assets/ktc/queries/get-by-details-ktc-draft-pick-query';
 
 const firebaseApp = firebase.initializeApp();
 const logger = functions.logger;
@@ -53,10 +55,16 @@ export const notifySleeperTransactions = functions.pubsub
     );
     const manySleeperToKtcPlayersConverter =
       new ManySleeperToKtcPlayersConverter(sleeperToKtcPlayerConverter);
+    const getByDetailsKtcDraftPickQuery = new GetByDetailsKtcDraftPickQuery(
+      firebaseApp
+    );
+    const getManyByDetailsKtcDraftPicksQuery =
+      new GetManyByDetailsKtcDraftPicksQuery(getByDetailsKtcDraftPickQuery);
     const ktcTransactionAnalysisLinkGenerator =
       new KtcTransactionAnalysisLinkGenerator();
     const transactionAnalyzer = new TransactionAnalyzer(
       manySleeperToKtcPlayersConverter,
+      getManyByDetailsKtcDraftPicksQuery,
       ktcTransactionAnalysisLinkGenerator
     );
     const createProcessedTransactionCommand =

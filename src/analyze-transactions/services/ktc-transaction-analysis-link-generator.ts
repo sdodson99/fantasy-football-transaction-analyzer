@@ -36,7 +36,10 @@ export class KtcTransactionAnalysisLinkGenerator {
    * @returns The URL params string for the transaction team.
    */
   private toTransactionAssetParams(transactionTeam: TransactionTeam): string {
-    const transactionAssetIds = transactionTeam.map((p) => p.id);
+    const transactionAssetIds = [
+      ...transactionTeam.players.map((p) => p.id),
+      ...transactionTeam.draftPicks.map((p) => p.id),
+    ];
 
     return transactionAssetIds.join('|');
   }
