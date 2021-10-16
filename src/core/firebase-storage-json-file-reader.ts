@@ -1,5 +1,4 @@
 import * as firebase from 'firebase-admin';
-import { promises as fs } from 'fs';
 
 /**
  * Service to download and read Firebase Storage JSON files.
@@ -17,15 +16,20 @@ export class FirebaseStorageJsonFileReader {
    * @returns The parsed JSON file content.
    */
   async read<T>(fileName: string): Promise<T> {
-    const destinationFilePath = `./${fileName}`;
+    return await new Promise((resolve, reject) => {
+      this.firebaseApp
+        .storage()
+        .bucket()
+        .file(fileName)
+        .download({ validation: false }, (err, fileBuffer) => {
+          if (err) {
+            return reject(err);
+          }
 
-    await this.firebaseApp.storage().bucket().file(fileName).download({
-      destination: destinationFilePath,
-      validation: false,
+          const data = JSON.parse(fileBuffer.toString());
+
+          resolve(data);
+        });
     });
-
-    const fileBuffer = await fs.readFile(destinationFilePath);
-
-    return JSON.parse(fileBuffer.toString());
   }
 }

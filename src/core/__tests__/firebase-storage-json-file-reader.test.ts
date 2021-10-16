@@ -1,14 +1,6 @@
 import * as firebase from 'firebase-admin';
-import { promises as fs } from 'fs';
 import { when } from 'jest-when';
 import { FirebaseStorageJsonFileReader } from '../firebase-storage-json-file-reader';
-
-jest.mock('fs', () => ({
-  promises: {
-    readFile: jest.fn(),
-  },
-}));
-const mockReadFile = fs.readFile as jest.Mock;
 
 describe('FirebaseStorageJsonFileReader', () => {
   let fileReader: FirebaseStorageJsonFileReader;
@@ -36,26 +28,21 @@ describe('FirebaseStorageJsonFileReader', () => {
     fileReader = new FirebaseStorageJsonFileReader(mockFirebaseApp);
   });
 
-  afterEach(() => {
-    mockReadFile.mockReset();
-  });
-
   it('should return parsed JSON file content for file', async () => {
-    mockReadFile.mockReturnValue('{ "hello": "world" }');
+    mockFirebaseStorageDownload.mockImplementation((_, cb) => {
+      cb(null, '{ "hello": "world" }');
+    });
 
     const data = await fileReader.read(fileName);
 
     expect(data).toEqual({ hello: 'world' });
   });
 
-  it('should download file from Firebase storage', async () => {
-    mockReadFile.mockReturnValue('{ "hello": "world" }');
-
-    await fileReader.read(fileName);
-
-    expect(mockFirebaseStorageDownload).toBeCalledWith({
-      destination: './fileName.json',
-      validation: false,
+  it('should throw error if file read fails', async () => {
+    mockFirebaseStorageDownload.mockImplementation((_, cb) => {
+      cb(new Error('Error.'), null);
     });
+
+    await expect(async () => await fileReader.read(fileName)).rejects.toThrow();
   });
 });

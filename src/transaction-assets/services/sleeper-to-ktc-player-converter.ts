@@ -21,9 +21,9 @@ export class SleeperToKtcPlayerConverter {
    * @param sleeperPlayerId The ID of the Sleeper player to convert.
    * @returns The KTC player result. Null if KTC player not found.
    */
-  async convert(sleeperPlayerID: string): Promise<KtcPlayer | null> {
+  async convert(sleeperPlayerId: string): Promise<KtcPlayer | null> {
     const sleeperPlayer = await this.getByIdSleeperPlayerQuery.execute(
-      sleeperPlayerID
+      sleeperPlayerId
     );
 
     const { firstName, lastName, birthDate } = sleeperPlayer;
