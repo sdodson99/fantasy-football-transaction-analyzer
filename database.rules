@@ -4,6 +4,9 @@
         "ktc": {
           "players": {
             ".indexOn": ["firstName_lastName_birthDate_index"]
+          },
+          "draft_picks": {
+            ".indexOn": ["round_year_index"]
           }
         }
     }
