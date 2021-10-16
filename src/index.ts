@@ -1,5 +1,6 @@
 import * as functions from 'firebase-functions';
 import * as firebase from 'firebase-admin';
+import { DateTime } from 'luxon';
 import { GetSleeperLeagueTransactionsQuery } from './sleeper-transactions/queries/get-sleeper-league-transactions-query';
 import { GetProcessedTransactionsQuery } from './processed-transactions/queries/get-processed-transactions-query';
 import { filterProcessedTransactions } from './processed-transactions/services/filter-processed-transactions';
@@ -7,7 +8,6 @@ import { TransactionAnalyzer } from './analyze-transactions/transaction-analyzer
 import { CreateProcessedTransactionCommand } from './processed-transactions/commands/create-processed-transaction-command';
 import { TransactionLeagueType } from './transactions/transaction';
 import { ProcessedTransaction } from './processed-transactions/processed-transaction';
-import { DateTime } from 'luxon';
 import { SleeperTransactionNotifier } from './notify-sleeper-transactions/sleeper-transaction-notifier';
 import { GetAllSleeperApiPlayersQuery } from './transaction-assets/sleeper/queries/get-all-sleeper-api-players-query';
 import { SaveAllSleeperPlayersCommand } from './transaction-assets/sleeper/commands/save-all-sleeper-players-command';
@@ -15,6 +15,11 @@ import { GetAllKtcStoredTransactionAssetsQuery } from './transaction-assets/ktc/
 import { SaveAllKtcPlayersCommand } from './transaction-assets/ktc/commands/save-all-ktc-players-command';
 import { SaveAllKtcDraftPicksCommand } from './transaction-assets/ktc/commands/save-all-ktc-draft-picks-command';
 import { FirebaseStorageJsonFileReader } from './core/firebase-storage-json-file-reader';
+import { GetByIdSleeperPlayerQuery } from './transaction-assets/sleeper/queries/get-by-id-sleeper-player-query';
+import { GetByDetailsKtcPlayerQuery } from './transaction-assets/ktc/queries/get-by-details-ktc-player-query';
+import { SleeperToKtcPlayerConverter } from './transaction-assets/services/sleeper-to-ktc-player-converter';
+import { ManySleeperToKtcPlayersConverter } from './transaction-assets/services/many-sleeper-to-ktc-players-converter';
+import { KtcTransactionAnalysisLinkGenerator } from './analyze-transactions/services/ktc-transaction-analysis-link-generator';
 
 const firebaseApp = firebase.initializeApp();
 const logger = functions.logger;
@@ -36,7 +41,24 @@ export const notifySleeperTransactions = functions.pubsub
     const getProcessedTransactionsQuery = new GetProcessedTransactionsQuery(
       firebaseApp
     );
-    const transactionAnalyzer = new TransactionAnalyzer();
+    const getByIdTransactionPlayerQuery = new GetByIdSleeperPlayerQuery(
+      firebaseApp
+    );
+    const getByDetailsKtcPlayerQuery = new GetByDetailsKtcPlayerQuery(
+      firebaseApp
+    );
+    const sleeperToKtcPlayerConverter = new SleeperToKtcPlayerConverter(
+      getByIdTransactionPlayerQuery,
+      getByDetailsKtcPlayerQuery
+    );
+    const manySleeperToKtcPlayersConverter =
+      new ManySleeperToKtcPlayersConverter(sleeperToKtcPlayerConverter);
+    const ktcTransactionAnalysisLinkGenerator =
+      new KtcTransactionAnalysisLinkGenerator();
+    const transactionAnalyzer = new TransactionAnalyzer(
+      manySleeperToKtcPlayersConverter,
+      ktcTransactionAnalysisLinkGenerator
+    );
     const createProcessedTransactionCommand =
       new CreateProcessedTransactionCommand(firebaseApp);
     const transactionNotifier = new SleeperTransactionNotifier(
