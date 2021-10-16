@@ -34,8 +34,12 @@ const bitlyAccessToken = functions.config().bitly.access_token;
 const nflWeek = functions.config().nfl.week;
 const leagueType: TransactionLeagueType = 'sleeper';
 
-export const notifySleeperTransactions = functions.pubsub
-  .schedule('0 * * * *')
+export const notifySleeperTransactions = functions
+  .runWith({
+    memory: '512MB',
+    timeoutSeconds: 300,
+  })
+  .pubsub.schedule('0 * * * *')
   .onRun(async () => {
     logger.info('Starting Sleeper league transactions notifier.', {
       leagueId,
