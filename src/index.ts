@@ -22,6 +22,7 @@ import { ManySleeperToKtcPlayersConverter } from './transaction-assets/services/
 import { KtcTransactionAnalysisLinkGenerator } from './analyze-transactions/services/ktc-transaction-analysis-link-generator';
 import { GetManyByDetailsKtcDraftPicksQuery } from './transaction-assets/ktc/queries/get-many-by-details-ktc-draft-picks-query';
 import { GetByDetailsKtcDraftPickQuery } from './transaction-assets/ktc/queries/get-by-details-ktc-draft-pick-query';
+import { BitlyUrlShortener } from './core/bitly-url-shortener';
 
 const firebaseApp = firebase.initializeApp();
 const logger = functions.logger;
@@ -31,6 +32,7 @@ const leagueType: TransactionLeagueType = 'sleeper';
 const nflWeek = 4;
 const sleeperBotEmail = functions.config().sleeperBot.email;
 const sleeperBotPassword = functions.config().sleeperBot.password;
+const bitlyAccessToken = functions.config().bitly.accessToken;
 
 export const notifySleeperTransactions = functions.pubsub
   .schedule('*/30 * * * *')
@@ -69,6 +71,7 @@ export const notifySleeperTransactions = functions.pubsub
     );
     const createProcessedTransactionCommand =
       new CreateProcessedTransactionCommand(firebaseApp);
+    const urlShortener = new BitlyUrlShortener(bitlyAccessToken);
     const transactionNotifier = new SleeperTransactionNotifier(
       sleeperBotEmail,
       sleeperBotPassword
@@ -137,6 +140,15 @@ export const notifySleeperTransactions = functions.pubsub
           processedTransaction
         );
         logger.info('Successfully completed transaction.');
+
+        logger.info('Shortening transaction analysis URL.');
+        const shortAnalysisUrl = await urlShortener.shorten(
+          transactionAnalysisUrl
+        );
+        processedTransaction.analysisUrl = shortAnalysisUrl;
+        logger.info('Successfully shortened transaction analysis URL.', {
+          shortAnalysisUrl,
+        });
 
         logger.info('Posting transaction to league chat.');
         await transactionNotifier.notify(leagueId, processedTransaction);
