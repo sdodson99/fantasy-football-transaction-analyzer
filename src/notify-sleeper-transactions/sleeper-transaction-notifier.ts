@@ -18,12 +18,7 @@ export class SleeperTransactionNotifier {
    * @param processedTransaction The processed transaction to post.
    */
   async notify(leagueId: string, processedTransaction: ProcessedTransaction) {
-    if (processedTransaction.type !== 'trade') {
-      // Skipping non-trade transactions for now.
-      return;
-    }
-
-    const browser = await chromium.launch({ headless: false });
+    const browser = await chromium.launch({ headless: true });
 
     const page = await browser.newPage();
     await page.goto('https://sleeper.app/login');

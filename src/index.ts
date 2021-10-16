@@ -141,18 +141,21 @@ export const notifySleeperTransactions = functions.pubsub
         );
         logger.info('Successfully completed transaction.');
 
-        logger.info('Shortening transaction analysis URL.');
-        const shortAnalysisUrl = await urlShortener.shorten(
-          transactionAnalysisUrl
-        );
-        processedTransaction.analysisUrl = shortAnalysisUrl;
-        logger.info('Successfully shortened transaction analysis URL.', {
-          shortAnalysisUrl,
-        });
+        // Only post trades for now.
+        if (processedTransaction.type === 'trade') {
+          logger.info('Shortening transaction analysis URL.');
+          const shortAnalysisUrl = await urlShortener.shorten(
+            transactionAnalysisUrl
+          );
+          processedTransaction.analysisUrl = shortAnalysisUrl;
+          logger.info('Successfully shortened transaction analysis URL.', {
+            shortAnalysisUrl,
+          });
 
-        logger.info('Posting transaction to league chat.');
-        await transactionNotifier.notify(leagueId, processedTransaction);
-        logger.info('Successfully posted transaction to league chat.');
+          logger.info('Posting transaction to league chat.');
+          await transactionNotifier.notify(leagueId, processedTransaction);
+          logger.info('Successfully posted transaction to league chat.');
+        }
       }
 
       logger.info('Finished notifying league transactions.');
