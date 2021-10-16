@@ -27,12 +27,12 @@ import { BitlyUrlShortener } from './core/bitly-url-shortener';
 const firebaseApp = firebase.initializeApp();
 const logger = functions.logger;
 
-const leagueId = functions.config().sleeperLeague.id;
+const leagueId = functions.config().sleeper_league.id;
 const leagueType: TransactionLeagueType = 'sleeper';
 const nflWeek = 4;
-const sleeperBotEmail = functions.config().sleeperBot.email;
-const sleeperBotPassword = functions.config().sleeperBot.password;
-const bitlyAccessToken = functions.config().bitly.accessToken;
+const sleeperBotEmail = functions.config().sleeper_bot.email;
+const sleeperBotPassword = functions.config().sleeper_bot.password;
+const bitlyAccessToken = functions.config().bitly.access_token;
 
 export const notifySleeperTransactions = functions.pubsub
   .schedule('*/30 * * * *')
