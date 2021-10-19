@@ -120,7 +120,6 @@ export const notifySleeperTransactions = functions
           analysisUrl: transactionAnalysisUrl,
         });
 
-        logger.info('Completing transaction.');
         const processedTransaction: ProcessedTransaction = {
           transactionId: currentUnprocessedTransaction.id,
           type: currentUnprocessedTransaction.type,
@@ -130,12 +129,6 @@ export const notifySleeperTransactions = functions
           analysisUrl: transactionAnalysisUrl,
           processedEpochMillis: DateTime.now().toMillis(),
         };
-        await createProcessedTransactionCommand.execute(
-          leagueId,
-          leagueType,
-          processedTransaction
-        );
-        logger.info('Successfully completed transaction.');
 
         // Only post trades for now.
         if (processedTransaction.type === 'trade') {
@@ -152,6 +145,14 @@ export const notifySleeperTransactions = functions
           await transactionNotifier.notify(leagueId, processedTransaction);
           logger.info('Successfully posted transaction to league chat.');
         }
+
+        logger.info('Completing transaction.');
+        await createProcessedTransactionCommand.execute(
+          leagueId,
+          leagueType,
+          processedTransaction
+        );
+        logger.info('Successfully completed transaction.');
       }
 
       logger.info('Finished notifying league transactions.');
