@@ -1,9 +1,5 @@
 import * as functions from 'firebase-functions';
-import { firebaseApp } from '../../startup/firebase-app';
-import { FirebaseStorageJsonFileReader } from '../../core/firebase-storage-json-file-reader';
-import { SaveAllKtcDraftPicksCommand } from '../../transaction-assets/ktc/commands/save-all-ktc-draft-picks-command';
-import { SaveAllKtcPlayersCommand } from '../../transaction-assets/ktc/commands/save-all-ktc-players-command';
-import { GetAllKtcStoredTransactionAssetsQuery } from '../../transaction-assets/ktc/queries/get-all-ktc-stored-transaction-assets-query';
+import * as services from './services';
 
 export const updateKtcTransactionAssets = functions.storage
   .object()
@@ -19,15 +15,14 @@ export const updateKtcTransactionAssets = functions.storage
 
     functions.logger.info('Starting KTC transaction assets update.');
 
-    const firebaseStorageJsonFileReader = new FirebaseStorageJsonFileReader(
-      firebaseApp
-    );
+    const serviceProvider = services.build();
+
     const getAllKtcStoredTransactionAssetsQuery =
-      new GetAllKtcStoredTransactionAssetsQuery(firebaseStorageJsonFileReader);
-    const saveAllKtcPlayersCommand = new SaveAllKtcPlayersCommand(firebaseApp);
-    const saveAllKtcDraftPicksCommand = new SaveAllKtcDraftPicksCommand(
-      firebaseApp
-    );
+      serviceProvider.resolveGetAllKtcStoredTransactionAssetsQuery();
+    const saveAllKtcPlayersCommand =
+      serviceProvider.resolveSaveAllKtcPlayersCommand();
+    const saveAllKtcDraftPicksCommand =
+      serviceProvider.resolveSaveAllKtcDraftPicksCommand();
 
     try {
       functions.logger.info('Querying all Sleeper transaction assets.');
