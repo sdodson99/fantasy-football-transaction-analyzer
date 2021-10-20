@@ -9,6 +9,7 @@ import { SleeperTransactionNotifier } from '../../notify-sleeper-transactions/sl
 import { CreateProcessedTransactionCommand } from '../../processed-transactions/commands/create-processed-transaction-command';
 import { GetProcessedTransactionsQuery } from '../../processed-transactions/queries/get-processed-transactions-query';
 import { filterProcessedTransactions } from '../../processed-transactions/services/filter-processed-transactions';
+import { GetPastRangeSleeperLeagueTransactionsQuery } from '../../sleeper-transactions/queries/get-past-range-sleeper-league-transactions-query';
 import { GetSleeperLeagueTransactionsQuery } from '../../sleeper-transactions/queries/get-sleeper-league-transactions-query';
 import { firebaseApp } from '../../startup/firebase-app';
 import { GetByDetailsKtcDraftPickQuery } from '../../transaction-assets/ktc/queries/get-by-details-ktc-draft-pick-query';
@@ -47,6 +48,8 @@ export const build = (config: NotifySleeperTransactionsConfig) => {
   );
 
   const getLeagueTransactionsQuery = new GetSleeperLeagueTransactionsQuery();
+  const getPastRangeLeagueTransactionsQuery =
+    new GetPastRangeSleeperLeagueTransactionsQuery(getLeagueTransactionsQuery);
   const getProcessedTransactionsQuery = new GetProcessedTransactionsQuery(
     firebaseApp
   );
@@ -66,7 +69,8 @@ export const build = (config: NotifySleeperTransactionsConfig) => {
 
   return {
     resolveGetCurrentNflWeekQuery: () => getCurrentNflWeekQuery,
-    resolveGetSleeperLeagueTransactionsQuery: () => getLeagueTransactionsQuery,
+    resolveGetSleeperLeagueTransactionsQuery: () =>
+      getPastRangeLeagueTransactionsQuery,
     resolveGetProcessedTransactionsQuery: () => getProcessedTransactionsQuery,
     resolveFilterProcessedTransactions: () => filterProcessedTransactions,
     resolveTransactionAnalyzer: () => transactionAnalyzer,
