@@ -1,6 +1,6 @@
 # Fantasy Football Transaction Analyzer
 
-Analyze fantasy football league transactions using [KeepTradeCut](https://keeptradecut.com/trade-calculator) to see who won or lost a trade. Analysis link is automatically posted to the fantasy football league chat.
+Analyze Sleeper fantasy football league transactions using [KeepTradeCut](https://keeptradecut.com/trade-calculator) to see who won or lost a trade. Analysis link is automatically posted to the Sleeper league chat.
 
 # Table of Contents
 
