@@ -49,8 +49,6 @@ describe('SingleRosterTransactionTeamsFactory', () => {
   it('should return correct transaction teams for transaction', () => {
     const transactionTeams = factory.create(transaction, sleeperToKtcPlayerMap);
 
-    console.log(JSON.stringify(transactionTeams));
-
     expect(transactionTeams).toEqual({
       team1: { players: [{ id: '1' }, { id: '2' }], draftPicks: [] },
       team2: { players: [{ id: '3' }], draftPicks: [] },
@@ -59,6 +57,10 @@ describe('SingleRosterTransactionTeamsFactory', () => {
 
   it('should return correct transaction teams when player not found', () => {
     transaction.addedPlayers.push({
+      playerId: '111111',
+      rosterId: '1',
+    });
+    transaction.droppedPlayers.push({
       playerId: '111111',
       rosterId: '1',
     });

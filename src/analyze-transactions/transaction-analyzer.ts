@@ -6,7 +6,6 @@ import { TransactionTeamsFactory } from './transaction-teams/transaction-teams-f
 
 /**
  * Service to analyze a transaction.
- * TODO: Need to refactor the TransactionTeams conversion logic!
  */
 export class TransactionAnalyzer {
   /**
