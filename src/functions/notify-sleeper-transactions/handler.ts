@@ -11,6 +11,8 @@ export const handleNotifySleeperTransactions = async () => {
 
   const serviceProvider = services.build(Config);
 
+  const getCurrentNflWeekQuery =
+    serviceProvider.resolveGetCurrentNflWeekQuery();
   const getLeagueTransactionsQuery =
     serviceProvider.resolveGetSleeperLeagueTransactionsQuery();
   const getProcessedTransactionsQuery =
@@ -24,10 +26,16 @@ export const handleNotifySleeperTransactions = async () => {
     serviceProvider.resolveCreateProcessedTransactionCommand();
 
   try {
+    logger.info('Querying current NFL week.');
+    const nflWeek = await getCurrentNflWeekQuery.execute();
+    logger.info('Successfully queried current NFL week.', {
+      nflWeek,
+    });
+
     logger.info('Querying league transactions.');
     const transactions = await getLeagueTransactionsQuery.execute(
       Config.LEAGUE_ID,
-      Config.NFL_WEEK
+      nflWeek
     );
     logger.info('Successfully queried league transactions.', {
       transactionCount: transactions.length,

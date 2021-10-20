@@ -4,6 +4,7 @@ import { MultiRosterTransactionTeamsFactory } from '../../analyze-transactions/t
 import { SingleRosterTransactionTeamsFactory } from '../../analyze-transactions/transaction-teams/single-roster-transaction-teams-factory';
 import { TransactionTeamsFactory } from '../../analyze-transactions/transaction-teams/transaction-teams-factory';
 import { BitlyUrlShortener } from '../../core/bitly-url-shortener';
+import { GetCurrentNflWeekQuery } from '../../nfl/queries/get-current-nfl-week-query';
 import { SleeperTransactionNotifier } from '../../notify-sleeper-transactions/sleeper-transaction-notifier';
 import { CreateProcessedTransactionCommand } from '../../processed-transactions/commands/create-processed-transaction-command';
 import { GetProcessedTransactionsQuery } from '../../processed-transactions/queries/get-processed-transactions-query';
@@ -19,6 +20,7 @@ import { GetByIdSleeperPlayerQuery } from '../../transaction-assets/sleeper/quer
 import { NotifySleeperTransactionsConfig } from './config';
 
 export const build = (config: NotifySleeperTransactionsConfig) => {
+  const getCurrentNflWeekQuery = new GetCurrentNflWeekQuery();
   const getByIdTransactionPlayerQuery = new GetByIdSleeperPlayerQuery(
     firebaseApp
   );
@@ -63,6 +65,7 @@ export const build = (config: NotifySleeperTransactionsConfig) => {
     new CreateProcessedTransactionCommand(firebaseApp);
 
   return {
+    resolveGetCurrentNflWeekQuery: () => getCurrentNflWeekQuery,
     resolveGetSleeperLeagueTransactionsQuery: () => getLeagueTransactionsQuery,
     resolveGetProcessedTransactionsQuery: () => getProcessedTransactionsQuery,
     resolveFilterProcessedTransactions: () => filterProcessedTransactions,

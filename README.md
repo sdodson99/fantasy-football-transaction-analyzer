@@ -64,9 +64,6 @@ firebase init emulators
   },
   "bitly": {
     "access_token": "<BITLY_ACCESS_TOKEN>"
-  },
-  "nfl": {
-    "week": <CURRENT_NFL_WEEK>
   }
 }
 ```
