@@ -23,8 +23,11 @@ export const handleUpdateSleeperPlayers = async () => {
 
     logger.info('Successfully updated Sleeper players.');
   } catch (error) {
+    const errorMessage =
+      error instanceof Error ? error.message : 'Unknown error.';
+
     logger.error('Failed to update Sleeper players.', {
-      error,
+      error: errorMessage,
     });
   }
 };

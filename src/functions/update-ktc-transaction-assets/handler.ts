@@ -30,8 +30,11 @@ export const handleUpdateKtcTransactionAssets = async () => {
 
     logger.info('Successfully updated KTC transaction assets.');
   } catch (error) {
+    const errorMessage =
+      error instanceof Error ? error.message : 'Unknown error.';
+
     logger.error('Failed to update KTC transaction assets.', {
-      error,
+      error: errorMessage,
     });
   }
 };

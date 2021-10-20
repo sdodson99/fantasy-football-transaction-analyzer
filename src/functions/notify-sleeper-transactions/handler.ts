@@ -113,9 +113,12 @@ export const handleNotifySleeperTransactions = async () => {
 
     logger.info('Finished notifying league transactions.');
   } catch (error) {
+    const errorMessage =
+      error instanceof Error ? error.message : 'Unknown error.';
+
     logger.error('Failed to notify league transactions.', {
       leagueId: Config.LEAGUE_ID,
-      error,
+      error: errorMessage,
     });
   }
 };
