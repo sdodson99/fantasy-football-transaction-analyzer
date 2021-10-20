@@ -1,4 +1,7 @@
-import { TransactionTeam, TransactionTeams } from '../transaction-teams';
+import {
+  TransactionTeam,
+  TransactionTeams,
+} from '../transaction-teams/transaction-teams';
 
 /**
  * Service to generate a KTC transaction analysis link.

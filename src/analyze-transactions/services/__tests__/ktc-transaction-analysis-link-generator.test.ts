@@ -2,7 +2,7 @@ import {
   KtcDraftPick,
   KtcPlayer,
 } from '../../../transaction-assets/ktc/ktc-transaction-asset';
-import { TransactionTeams } from '../../transaction-teams';
+import { TransactionTeams } from '../../transaction-teams/transaction-teams';
 import { KtcTransactionAnalysisLinkGenerator } from '../ktc-transaction-analysis-link-generator';
 
 describe('KtcTransactionAnalysisLinkGenerator', () => {

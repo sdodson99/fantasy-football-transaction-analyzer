@@ -1,7 +1,7 @@
 import {
   KtcDraftPick,
   KtcPlayer,
-} from '../transaction-assets/ktc/ktc-transaction-asset';
+} from '../../transaction-assets/ktc/ktc-transaction-asset';
 
 export type TransactionTeam = {
   players: KtcPlayer[];
@@ -11,8 +11,4 @@ export type TransactionTeam = {
 export type TransactionTeams = {
   team1: TransactionTeam;
   team2: TransactionTeam;
-};
-
-export type MultiRosterTransactionTeams = {
-  [rosterId: string]: TransactionTeam;
 };

@@ -1,5 +1,8 @@
 import { KtcTransactionAnalysisLinkGenerator } from '../../analyze-transactions/services/ktc-transaction-analysis-link-generator';
 import { TransactionAnalyzer } from '../../analyze-transactions/transaction-analyzer';
+import { MultiRosterTransactionTeamsFactory } from '../../analyze-transactions/transaction-teams/multi-roster-transaction-teams-factory';
+import { SingleRosterTransactionTeamsFactory } from '../../analyze-transactions/transaction-teams/single-roster-transaction-teams-factory';
+import { TransactionTeamsFactory } from '../../analyze-transactions/transaction-teams/transaction-teams-factory';
 import { BitlyUrlShortener } from '../../core/bitly-url-shortener';
 import { SleeperTransactionNotifier } from '../../notify-sleeper-transactions/sleeper-transaction-notifier';
 import { CreateProcessedTransactionCommand } from '../../processed-transactions/commands/create-processed-transaction-command';
@@ -36,6 +39,10 @@ export const build = (config: NotifySleeperTransactionsConfig) => {
     new GetManyByDetailsKtcDraftPicksQuery(getByDetailsKtcDraftPickQuery);
   const ktcTransactionAnalysisLinkGenerator =
     new KtcTransactionAnalysisLinkGenerator();
+  const transactionTeamsFactory = new TransactionTeamsFactory(
+    new SingleRosterTransactionTeamsFactory(),
+    new MultiRosterTransactionTeamsFactory()
+  );
 
   const getLeagueTransactionsQuery = new GetSleeperLeagueTransactionsQuery();
   const getProcessedTransactionsQuery = new GetProcessedTransactionsQuery(
@@ -44,7 +51,8 @@ export const build = (config: NotifySleeperTransactionsConfig) => {
   const transactionAnalyzer = new TransactionAnalyzer(
     manySleeperToKtcPlayersConverter,
     getManyByDetailsKtcDraftPicksQuery,
-    ktcTransactionAnalysisLinkGenerator
+    ktcTransactionAnalysisLinkGenerator,
+    transactionTeamsFactory
   );
   const urlShortener = new BitlyUrlShortener(config.BITLY_ACCESS_TOKEN);
   const transactionNotifier = new SleeperTransactionNotifier(
