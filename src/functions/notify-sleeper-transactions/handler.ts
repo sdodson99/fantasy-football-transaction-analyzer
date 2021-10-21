@@ -2,14 +2,16 @@ import { DateTime } from 'luxon';
 import { logger } from '../../core/logger';
 import { ProcessedTransaction } from '../../processed-transactions/processed-transaction';
 import * as services from './services';
-import { Config } from './config';
+import { loadConfig } from './config';
 
 export const handleNotifySleeperTransactions = async () => {
+  const config = loadConfig();
+
   logger.info('Starting Sleeper league transactions notifier.', {
-    leagueId: Config.LEAGUE_ID,
+    leagueId: config.LEAGUE_ID,
   });
 
-  const serviceProvider = services.build(Config);
+  const serviceProvider = services.build(config);
 
   const getCurrentNflWeekQuery =
     serviceProvider.resolveGetCurrentNflWeekQuery();
@@ -34,7 +36,7 @@ export const handleNotifySleeperTransactions = async () => {
 
     logger.info('Querying league transactions.');
     const transactions = await getLeagueTransactionsQuery.execute(
-      Config.LEAGUE_ID,
+      config.LEAGUE_ID,
       nflWeek
     );
     logger.info('Successfully queried league transactions.', {
@@ -43,8 +45,8 @@ export const handleNotifySleeperTransactions = async () => {
 
     logger.info('Querying processed league transactions.');
     const processedTransactions = await getProcessedTransactionsQuery.execute(
-      Config.LEAGUE_ID,
-      Config.LEAGUE_TYPE
+      config.LEAGUE_ID,
+      config.LEAGUE_TYPE
     );
     logger.info('Successfully queried processed league transactions.', {
       processedTransactionsCount: processedTransactions.length,
@@ -81,8 +83,8 @@ export const handleNotifySleeperTransactions = async () => {
       const processedTransaction: ProcessedTransaction = {
         transactionId: currentUnprocessedTransaction.id,
         type: currentUnprocessedTransaction.type,
-        leagueId: Config.LEAGUE_ID,
-        leagueType: Config.LEAGUE_TYPE,
+        leagueId: config.LEAGUE_ID,
+        leagueType: config.LEAGUE_TYPE,
         week: currentUnprocessedTransaction.week,
         analysisUrl: transactionAnalysisUrl,
         processedEpochMillis: DateTime.now().toMillis(),
@@ -104,7 +106,7 @@ export const handleNotifySleeperTransactions = async () => {
 
         logger.info('Posting transaction to league chat.');
         await transactionNotifier.notify(
-          Config.LEAGUE_ID,
+          config.LEAGUE_ID,
           processedTransaction
         );
         logger.info('Successfully posted transaction to league chat.');
@@ -112,8 +114,8 @@ export const handleNotifySleeperTransactions = async () => {
 
       logger.info('Completing transaction.');
       await createProcessedTransactionCommand.execute(
-        Config.LEAGUE_ID,
-        Config.LEAGUE_TYPE,
+        config.LEAGUE_ID,
+        config.LEAGUE_TYPE,
         processedTransaction
       );
       logger.info('Successfully completed transaction.');
@@ -125,7 +127,7 @@ export const handleNotifySleeperTransactions = async () => {
       error instanceof Error ? error.message : 'Unknown error.';
 
     logger.error('Failed to notify league transactions.', {
-      leagueId: Config.LEAGUE_ID,
+      leagueId: config.LEAGUE_ID,
       error: errorMessage,
     });
   }

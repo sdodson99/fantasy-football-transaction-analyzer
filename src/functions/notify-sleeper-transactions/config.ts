@@ -1,18 +1,22 @@
 import * as functions from 'firebase-functions';
 import { TransactionLeagueType } from '../../transactions/transaction';
 
-const LEAGUE_ID = functions.config().sleeper_league.id;
-const SLEEPER_BOT_EMAIL = functions.config().sleeper_bot.email;
-const SLEEPER_BOT_PASSWORD = functions.config().sleeper_bot.password;
-const BITLY_ACCESS_TOKEN = functions.config().bitly.access_token;
-const LEAGUE_TYPE: TransactionLeagueType = 'sleeper';
-
-export const Config = {
-  LEAGUE_ID,
-  SLEEPER_BOT_EMAIL,
-  SLEEPER_BOT_PASSWORD,
-  BITLY_ACCESS_TOKEN,
-  LEAGUE_TYPE,
+export type NotifySleeperTransactionsConfig = {
+  LEAGUE_ID: string;
+  LEAGUE_TYPE: TransactionLeagueType;
+  SLEEPER_BOT_EMAIL: string;
+  SLEEPER_BOT_PASSWORD: string;
+  BITLY_ACCESS_TOKEN: string;
 };
 
-export type NotifySleeperTransactionsConfig = typeof Config;
+export const loadConfig = (): NotifySleeperTransactionsConfig => {
+  const config = functions.config();
+
+  return {
+    LEAGUE_ID: config.sleeper_league.id,
+    LEAGUE_TYPE: 'sleeper',
+    SLEEPER_BOT_EMAIL: config.sleeper_bot.email,
+    SLEEPER_BOT_PASSWORD: config.sleeper_bot.password,
+    BITLY_ACCESS_TOKEN: config.bitly.access_token,
+  };
+};
