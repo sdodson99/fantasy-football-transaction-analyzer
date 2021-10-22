@@ -1,13 +1,17 @@
-name: Deploy
+name: Build
 
 on:
   push:
     branches:
       - 'master'
+      - 'release'
+  pull_request:
+    branches:
+      - '*'
 
 jobs:
   build:
-    name: Deploy
+    name: Build
     runs-on: ubuntu-latest
     steps:
       - name: 'Checkout'
@@ -22,9 +26,11 @@ jobs:
       - name: 'Install packages'
         run: 'npm ci'
 
-      - name: 'Deploy'
-        uses: w9jds/firebase-action@master
-        with:
-          args: deploy --only functions
-        env:
-          FIREBASE_TOKEN: ${{ secrets.FIREBASE_TOKEN }}
+      - name: 'Lint'
+        run: 'npm run lint'
+
+      - name: 'Test'
+        run: 'npm run test:ci'
+
+      - name: 'Build'
+        run: 'npm run build'
