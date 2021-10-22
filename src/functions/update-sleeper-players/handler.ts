@@ -4,14 +4,14 @@ import * as services from './services';
 export const handleUpdateSleeperPlayers = async () => {
   logger.info('Starting Sleeper players update.');
 
+  const serviceProvider = services.build();
+
+  const getAllSleeperApiPlayersQuery =
+    serviceProvider.resolveGetAllSleeperApiPlayersQuery();
+  const saveAllSleeperPlayersCommand =
+    serviceProvider.resolveSaveAllSleeperPlayersCommand();
+
   try {
-    const serviceProvider = services.build();
-
-    const getAllSleeperApiPlayersQuery =
-      serviceProvider.resolveGetAllSleeperApiPlayersQuery();
-    const saveAllSleeperPlayersCommand =
-      serviceProvider.resolveSaveAllSleeperPlayersCommand();
-
     logger.info('Querying all Sleeper players.');
     const sleeperPlayers = await getAllSleeperApiPlayersQuery.execute();
     logger.info('Successfully queried all Sleeper players.', {

@@ -11,7 +11,7 @@ import { GetProcessedTransactionsQuery } from '../../processed-transactions/quer
 import { filterProcessedTransactions } from '../../processed-transactions/services/filter-processed-transactions';
 import { GetPastRangeSleeperLeagueTransactionsQuery } from '../../sleeper-transactions/queries/get-past-range-sleeper-league-transactions-query';
 import { GetSleeperLeagueTransactionsQuery } from '../../sleeper-transactions/queries/get-sleeper-league-transactions-query';
-import { firebaseApp } from '../../startup/firebase-app';
+import { getFirebaseApp } from '../../startup/firebase-app';
 import { GetByDetailsKtcDraftPickQuery } from '../../transaction-assets/ktc/queries/get-by-details-ktc-draft-pick-query';
 import { GetByDetailsKtcPlayerQuery } from '../../transaction-assets/ktc/queries/get-by-details-ktc-player-query';
 import { GetManyByDetailsKtcDraftPicksQuery } from '../../transaction-assets/ktc/queries/get-many-by-details-ktc-draft-picks-query';
@@ -21,6 +21,8 @@ import { GetByIdSleeperPlayerQuery } from '../../transaction-assets/sleeper/quer
 import { NotifySleeperTransactionsConfig } from './config';
 
 export const build = (config: NotifySleeperTransactionsConfig) => {
+  const firebaseApp = getFirebaseApp();
+
   const getCurrentNflWeekQuery = new GetCurrentNflWeekQuery();
   const getByIdTransactionPlayerQuery = new GetByIdSleeperPlayerQuery(
     firebaseApp

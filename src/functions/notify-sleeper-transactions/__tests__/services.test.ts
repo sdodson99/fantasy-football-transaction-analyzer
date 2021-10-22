@@ -1,6 +1,8 @@
 import { NotifySleeperTransactionsConfig } from '../config';
 import * as services from '../services';
 
+jest.mock('../../../startup/firebase-app');
+
 describe('services', () => {
   describe('build', () => {
     let config: NotifySleeperTransactionsConfig;
