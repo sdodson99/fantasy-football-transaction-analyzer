@@ -107,7 +107,7 @@ export const handleNotifySleeperTransactions = async () => {
         logger.info('Posting transaction to league chat.');
         await transactionNotifier.notify(
           config.LEAGUE_ID,
-          processedTransaction
+          notifyProcessedTransaction
         );
         logger.info('Successfully posted transaction to league chat.');
       }
